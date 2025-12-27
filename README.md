@@ -78,4 +78,5 @@ Cataloguei manualmente os ativos na Dadosfera:
 **Resultado:** Sucesso na validação (100%).
 
 ### Evidências Técnicas
-* 📄 **Notebook:** [Ver Código de Validação](notebooks/data
+* 📄 **Notebook de Código:** [Ver data_quality.ipynb](notebooks/data_quality.ipynb)
+* 💾 **Arquivo Gerado (CDM):** [Baixar GOLD_SALES_ORDER_CDM.csv](data/gold/GOLD_SALES_ORDER_CDM.csv)
