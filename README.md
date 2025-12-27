@@ -307,4 +307,30 @@ Isso garante **escalabilidade elástica**: se o volume de dados aumentasse de 10
 
 ![Data App Streamlit Sobre](assets/app_sobre.png)
 
+----
+
+## 🚀 Item 10 - Apresentação do Case e Nova Arquitetura
+
+**Objetivo:** Apresentar a viabilidade técnica da adoção da Dadosfera para substituir a arquitetura legada baseada em microsserviços AWS, com foco na implementação de IA.
+
+### 1. Diagnóstico da Arquitetura Atual
+A arquitetura atual (Generator → Kinesis → S3/Redis) é eficiente para *transporte* de dados em tempo real, mas apresenta lacunas críticas para o objetivo de negócio (**Modelos de IA**):
+* **Alta Complexidade Operacional:** Necessidade de gerenciar múltiplos serviços desconectados (Kinesis Streams, Firehose, Lambdas).
+* **Baixa Capacidade Analítica:** O Redis é um banco Key-Value, inadequado para análises OLAP ou treinamento de modelos.
+* **Falta de Governança:** Dados brutos no S3 dificultam a garantia de qualidade (Data Quality).
+
+### 2. Solução Proposta (To-Be)
+A Prova de Conceito (PoC) realizada demonstra que a Dadosfera atua como uma **Plataforma de Dados Moderna (MDP)**, centralizando a jornada:
+
+**De:**
+`Generator` → `Kinesis` → `Firehose` → `S3 (Raw)`
+
+**Para:**
+`Generator` → **`Dadosfera Pipeline`** → **`Snowflake (Gold Layer)`** → **`GenAI Module`** → **`Streamlit App`**
+
+### 3. Ganhos Estratégicos
+1.  **Aceleração de IA:** Integração nativa com LLMs para Análise de Sentimento (Item 5), algo que exigiria desenvolvimento complexo na arquitetura anterior.
+2.  **Democratização:** Substituição de arquivos técnicos (JSON/CSV) por um Data App interativo (Item 9) para a equipe de negócios.
+3.  **Qualidade Assegurada:** Validação de dados (Great Expectations) integrada ao pipeline, prevenindo "Lixo entra, Lixo sai".
+
 
