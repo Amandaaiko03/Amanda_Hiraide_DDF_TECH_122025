@@ -77,6 +77,18 @@ Cataloguei manualmente os ativos na Dadosfera:
 
 **Resultado:** Sucesso na validação (100%).
 
+**Relatório de Execução (JSON Output):**
+```json
+{
+    "evaluated_expectations": 5,
+    "successful_expectations": 5,
+    "unsuccessful_expectations": 0,
+    "success_percent": 100.0
+}
+```
+
 ### Evidências Técnicas
 * 📄 **Notebook de Código:** [Ver data_quality.ipynb](notebooks/data_quality.ipynb)
 * 💾 **Arquivo Gerado (CDM):** [Baixar GOLD_SALES_ORDER_CDM.csv](data/gold/GOLD_SALES_ORDER_CDM.csv)
+
+
