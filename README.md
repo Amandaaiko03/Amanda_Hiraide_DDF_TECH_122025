@@ -92,3 +92,178 @@ Cataloguei manualmente os ativos na Dadosfera:
 * 💾 **Arquivo Gerado (CDM):** [Baixar GOLD_SALES_ORDER_CDM.csv](data/gold/GOLD_SALES_ORDER_CDM.csv)
 
 
+## 🤖 Item 5 - Sobre o uso de GenAI e LLMs - Processar
+
+**Objetivo:** Transformar dados desestruturados (texto livre dos reviews) em features estruturadas para alimentar dashboards e modelos de churn. A base utilizada foi a `olist_order_reviews`, focando na coluna `review_comment_message`.
+
+**Metodologia (Prompt Engineering):** Utilizei um modelo de LLM para interpretar a semântica dos comentários e extrair um objeto JSON contendo:
+
+* **Sentiment Analysis:** Classificação em Positivo/Neutro/Negativo.
+* **Category Tagging:** Classificação do problema (ex: Logística vs Qualidade do Produto).
+* **Actionable Insight:** Flag de urgência para atendimento.
+
+**Exemplo de Input (Desestruturado):**
+> "Recebi bem antes do prazo estipulado."
+
+**Exemplo de Output (Feature JSON):**
+```json
+{
+  "sentiment": "Positivo",
+  "category": "Logística",
+  "features": {
+    "keywords": ["recebi", "bem", "antes"],
+    "urgent_action_needed": "Não"
+  }
+}
+```
+
+## 📐 Item 6 - Modelagem de Dados (Camada Gold)
+
+**Metodologia Escolhida:** Star Schema (Kimball)
+
+Para a modelagem final do Data Warehouse, optei pela metodologia dimensional de Ralph Kimball (Star Schema).
+
+### Justificativa da Escolha:
+
+* **Performance de Leitura:** Como o objetivo final é alimentar dashboards (Power BI/Metabase) e modelos de IA, o Star Schema reduz o número de joins necessários nas consultas, otimizando a performance.
+* **Intuitividade:** A separação clara entre Fatos (métricas numéricas) e Dimensões (contextos descritivos) facilita o self-service BI por usuários de negócio.
+* **Aderência ao Negócio:** O cenário de E-commerce adapta-se naturalmente a este modelo: "Vendas" (Fato) ocorrem em um "Tempo", feitas por um "Cliente", contendo um "Produto".
+
+**Estrutura Proposta:** O modelo consiste em uma tabela central de fatos cercada por tabelas de dimensão desnormalizadas.
+
+```mermaid
+erDiagram
+    %% Tabela Fato Central
+    Fato_Vendas {
+        string order_id FK
+        string product_id FK
+        string customer_id FK
+        string seller_id FK
+        datetime data_compra FK
+        double valor_venda
+        double valor_frete
+        int quantidade
+    }
+
+    %% Tabelas Dimensão
+    Dim_Tempo {
+        datetime data_id PK
+        int ano
+        int mes
+        int dia
+        string dia_semana
+        boolean eh_feriado
+    }
+
+    Dim_Produto {
+        string product_id PK
+        string categoria
+        double peso_g
+        string tamanho_embalagem
+    }
+
+    Dim_Cliente {
+        string customer_id PK
+        string customer_unique_id
+        string cidade
+        string estado
+        string cep_prefixo
+    }
+
+    Dim_Vendedor {
+        string seller_id PK
+        string cidade
+        string estado
+    }
+
+    %% Relacionamentos (Star Schema)
+    Fato_Vendas }|..|| Dim_Tempo : "Data da Compra"
+    Fato_Vendas }|..|| Dim_Cliente : "Realizada por"
+    Fato_Vendas }|..|| Dim_Produto : "Contém Item"
+    Fato_Vendas }|..|| Dim_Vendedor : "Vendido por"
+
+```
+## 📊 Item 7 - Sobre Análise de Dados - Analisar
+
+**Objetivo:** Transformar os dados brutos da camada Bronze em inteligência de negócio. Devido à estratégia de ingestão assíncrona, este primeiro dashboard foca na Análise Demográfica e Geográfica (Dimensão Clientes), fundamental para o planejamento logístico do e-commerce.
+
+**Artefatos na Dadosfera:**
+* **Coleção:** `Amanda Aiko - 122025`
+* **Dashboard:** `Dashboard Case `
+
+### Visualizações Desenvolvidas (Business Questions)
+
+O dashboard foi estruturado para responder a 5 perguntas estratégicas de negócio, utilizando 5 tipos de visualizações distintas:
+
+1.  **Indicador de Alcance (Big Number):**
+    * **Insight:** Monitoramento do tamanho total da base de clientes únicos (96.096), servindo como norte para metas de crescimento.
+    * **Tipo:** KPI Numérico.
+
+2.  **Distribuição por Estado (Bar Chart Vertical):**
+    * **Insight:** Identificação dos polos de demanda. Nota-se a liderança absoluta de SP, sugerindo onde devem ser alocados os Centros de Distribuição (CDs).
+    * **Query SQL:** Agrupamento por `customer_state`.
+
+3.  **Top 10 Cidades (Bar Chart Horizontal):**
+    * **Insight:** Granularidade municipal para rotas de "Last Mile". Capitais como São Paulo e Rio de Janeiro dominam, mas cidades como Campinas aparecem como hubs secundários importantes.
+
+4.  **Market Share por Macro-Região (Donut Chart):**
+    * **Insight:** Visão executiva da presença nacional. A região Sudeste representa 68,65% do total, validando a estratégia de concentração logística nesta área.
+    * **Técnica:** Uso de `CASE WHEN` no SQL para criar a dimensão "Região".
+
+5.  **Capilaridade Logística (Area Chart):**
+    * **Insight:** Análise de cobertura territorial. Mostra em quantas cidades distintas a marca está presente dentro de cada estado. Minas Gerais (MG) destaca-se com alta capilaridade (745 cidades), indicando alta complexidade de entrega no interior.
+
+**Evidência Visual:**
+![Dashboard Case](assets/dashboard.png)
+
+### Queries SQL Utilizadas:
+
+```sql
+-- 1. KPI Total de Clientes
+SELECT COUNT(DISTINCT customer_unique_id) AS Base_Clientes_Unicos
+FROM PUBLIC.TB__6IF8E9__OLIST_CUSTOMERS_DATASET;
+
+-- 2. Top 10 Cidades
+SELECT customer_city AS Cidade, COUNT(*) AS Total_Clientes
+FROM PUBLIC.TB__6IF8E9__OLIST_CUSTOMERS_DATASET
+GROUP BY customer_city ORDER BY Total_Clientes DESC LIMIT 10;
+
+-- 3. Macro-Regiões (Case When)
+SELECT
+    CASE
+        WHEN customer_state IN ('SP', 'RJ', 'MG', 'ES') THEN 'Sudeste'
+        WHEN customer_state IN ('PR', 'SC', 'RS') THEN 'Sul'
+        WHEN customer_state IN ('BA', 'SE', 'AL', 'PE', 'PB', 'RN', 'CE', 'PI', 'MA') THEN 'Nordeste'
+        WHEN customer_state IN ('AM', 'RR', 'AP', 'PA', 'TO', 'RO', 'AC') THEN 'Norte'
+        ELSE 'Centro-Oeste'
+    END AS Regiao,
+    COUNT(*) AS Total_Clientes
+FROM PUBLIC.TB__6IF8E9__OLIST_CUSTOMERS_DATASET
+GROUP BY 1 ORDER BY Total_Clientes DESC;
+```
+## 🔗 Item 8 - Sobre Pipelines
+
+**Arquitetura do Pipeline (ELT):** Para garantir o fluxo contínuo de dados para o Data Lake, implementei um pipeline de **ELT (Extract, Load, Transform)**. Optei pelo padrão ELT em vez de ETL para aproveitar o poder de processamento do Data Warehouse (Snowflake) nas etapas de transformação.
+
+### 1. Pipeline de Ingestão (Extract & Load)
+* **Ferramenta:** Dadosfera Coleta Module.
+* **Origem:** Arquivos CSV/Google Sheets (Camada Landing).
+* **Destino:** Snowflake Data Warehouse (Camada Bronze).
+* **Agendamento:** Trigger Manual (Batch).
+* **Status:** Executado com Sucesso ✅.
+
+### 2. Catalogação do Pipeline
+* **Nome do Ativo:** `Pipeline_Ingestao_Olist_Customers`
+* **Função:** Responsável por ler o dataset bruto, validar o schema inicial e persistir os dados na tabela `PUBLIC.TB__..._CUSTOMERS`.
+* **Monitoramento:** Logs de execução auditáveis via interface da plataforma.
+
+### 🏆 Processamento com Snowflake (Snowpark/SQL)
+O processamento dos dados foi delegado para a engine do **Snowflake**.
+
+Ao utilizar a arquitetura da Dadosfera, o *compute* utilizado para a ingestão e para as queries de visualização (Item 7) foi o Warehouse do Snowflake.
+
+Isso garante **escalabilidade elástica**: se o volume de dados aumentasse de 100 mil para 100 milhões de linhas, o pipeline continuaria performático sem necessidade de refatoração de código, apenas ajuste de *Warehouse Size*.
+
+**Evidência do Pipeline:**
+![Evidência Pipeline](assets/pipeline_status.png)
+
