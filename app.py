@@ -18,19 +18,21 @@ st.markdown("Este Data App demonstra a aplicação de **Engenharia de Dados** e 
 # Função de Carga de Dados (Cache)
 @st.cache_data
 def load_data():
-    # 1. Carregar Reviews (CORRIGIDO PARA O ARQUIVO CERTO)
+    # 1. Carregar Reviews (Prioridade: Raiz)
     df_reviews = None
-    # Tenta ler na raiz ou dentro da pasta data
-    paths_reviews = ["REVIEWS_ENRICHED_GENAI.csv", "REVIEWS_ENRICHED_GENAI.csv"]
+    # Lista de caminhos: Tenta na raiz primeiro, depois na pasta data
+    paths_reviews = ["REVIEWS_ENRICHED_GENAI.csv", "data/REVIEWS_ENRICHED_GENAI.csv"]
     
     for path in paths_reviews:
         try:
             df_reviews = pd.read_csv(path)
-            break 
+            # Verifica se carregou certo (se tem colunas)
+            if not df_reviews.empty:
+                break 
         except FileNotFoundError:
             continue
             
-    # Fallback (Dados fictícios caso arquivo não exista)
+    # Fallback (Dados fictícios caso arquivo não seja encontrado)
     if df_reviews is None:
         st.warning("⚠️ Arquivo de Reviews não encontrado. Usando dados de exemplo.")
         df_reviews = pd.DataFrame({
@@ -46,7 +48,8 @@ def load_data():
     for path in paths_sales:
         try:
             df_sales = pd.read_csv(path)
-            break
+            if not df_sales.empty:
+                break
         except FileNotFoundError:
             continue
 
@@ -71,7 +74,7 @@ with tab1:
         col1, col2, col3 = st.columns(3)
         total_reviews = len(df_reviews)
         
-        # Verifica se a coluna 'sentiment' existe (mesmo com dados fake ou reais)
+        # Verifica se a coluna 'sentiment' existe
         if 'sentiment' in df_reviews.columns:
             # Métricas
             positive_pct = len(df_reviews[df_reviews['sentiment']=='Positivo']) / total_reviews * 100
@@ -96,10 +99,11 @@ with tab1:
             st.subheader("🔍 Buscador Semântico")
             texto = st.text_input("Digite um termo (ex: entrega, prazo):")
             if texto:
-                filtrado = df_reviews[df_reviews['review_comment_message'].str.contains(texto, case=False, na=False)]
+                # Tratamento para garantir que a busca não quebre com valores nulos
+                filtrado = df_reviews[df_reviews['review_comment_message'].fillna('').str.contains(texto, case=False)]
                 st.dataframe(filtrado[['category', 'sentiment', 'review_comment_message']].head(10))
         else:
-            st.error("A coluna 'sentiment' não foi encontrada no CSV carregado.")
+            st.error("A coluna 'sentiment' não foi encontrada no CSV carregado. Verifique o arquivo.")
 
 # Aba 2: Vendas (Gold)
 with tab2:
