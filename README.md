@@ -267,4 +267,29 @@ Isso garante **escalabilidade elástica**: se o volume de dados aumentasse de 10
 **Evidência do Pipeline:**
 ![Evidência Pipeline](assets/pipeline_costomers.png)
 
+## 📱 Item 9 - Data App (Streamlit)
+
+**Objetivo:** Democratizar o acesso aos dados através de uma aplicação web interativa, permitindo que stakeholders explorem os insights de Logística e IA sem necessidade de conhecimento em SQL.
+
+**Funcionalidades do App:**
+1.  **Dashboard de IA (GenAI):** Visualização interativa da Análise de Sentimento dos reviews (Positivo/Negativo) e categorização automática.
+2.  **Busca Semântica:** Ferramenta de pesquisa para encontrar problemas específicos nos comentários (ex: "atraso", "quebrado").
+3.  **Visualização da Camada Gold:** Acesso rápido aos dados padronizados de vendas (CDM).
+
+**🛠️ Stack Tecnológico:** Python, Streamlit, Plotly Express.
+
+### 🌐 Acesso ao Projeto
+👉 **[CLIQUE AQUI PARA ACESSAR O APP ONLINE](https://amandahiraideddftech122025-e68frsqu5sytxxjdjngj7f.streamlit.app/)**
+
+*(Caso o link esteja indisponível devido à inatividade do servidor gratuito, o código fonte completo encontra-se neste repositório para execução local)*
+
+**Evidência Visual:**
+![Data App Streamlit](assets/app1.png)
+
+![Data App Streamlit](assets/app2.png)
+
+![Data App Streamlit Dados](assets/app_dados_de_venda.png)
+
+![Data App Streamlit Sobre](assets/app_sobre.png)
+
 
