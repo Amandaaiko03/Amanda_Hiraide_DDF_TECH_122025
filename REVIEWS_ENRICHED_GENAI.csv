@@ -1,0 +1,15 @@
+review_id,review_comment_message,sentiment,category,ai_features_json
+e64fb393e7b32834bb789ff8bb30750e,Recebi bem antes do prazo estipulado.,Neutro,Logística,"{""sentiment"": ""Neutro"", ""category"": ""Log\u00edstica"", ""features"": {""keywords"": [""recebi"", ""bem"", ""antes""], ""urgent_action_needed"": ""N\u00e3o""}}"
+f7c4243c7fe1938f181bec41a392bdeb,Parabéns lojas lannister adorei comprar pela Internet seguro e prático Parabéns a todos feliz Páscoa,Neutro,Geral,"{""sentiment"": ""Neutro"", ""category"": ""Geral"", ""features"": {""keywords"": [""parab\u00e9ns"", ""lojas"", ""lannister""], ""urgent_action_needed"": ""N\u00e3o""}}"
+8670d52e15e00043ae7de4c01cc2fe06,aparelho eficiente. no site a marca do aparelho esta impresso como 3desinfector e ao chegar esta com outro nome...atualizar com a marca correta uma vez que é o mesmo aparelho,Neutro,Geral,"{""sentiment"": ""Neutro"", ""category"": ""Geral"", ""features"": {""keywords"": [""aparelho"", ""eficiente."", ""no""], ""urgent_action_needed"": ""N\u00e3o""}}"
+4b49719c8a200003f700d3d986ea1a19,"Mas um pouco ,travando...pelo valor ta Boa.
+",Neutro,Geral,"{""sentiment"": ""Neutro"", ""category"": ""Geral"", ""features"": {""keywords"": [""mas"", ""um"", ""pouco""], ""urgent_action_needed"": ""N\u00e3o""}}"
+3948b09f7c818e2d86c9a546758b2335,"Vendedor confiável, produto ok e entrega antes do prazo.",Neutro,Logística,"{""sentiment"": ""Neutro"", ""category"": ""Log\u00edstica"", ""features"": {""keywords"": [""vendedor"", ""confi\u00e1vel,"", ""produto""], ""urgent_action_needed"": ""N\u00e3o""}}"
+9314d6f9799f5bfba510cc7bcd468c01,"GOSTARIA DE SABER O QUE HOUVE, SEMPRE RECEBI E ESSA COMPRA AGORA ME DECPCIONOU",Neutro,Geral,"{""sentiment"": ""Neutro"", ""category"": ""Geral"", ""features"": {""keywords"": [""gostaria"", ""de"", ""saber""], ""urgent_action_needed"": ""N\u00e3o""}}"
+373cbeecea8286a2b66c97b1b157ec46,Péssimo,Negativo,Geral,"{""sentiment"": ""Negativo"", ""category"": ""Geral"", ""features"": {""keywords"": [""p\u00e9ssimo""], ""urgent_action_needed"": ""Sim""}}"
+d21bbc789670eab777d27372ab9094cc,Loja nota 10,Neutro,Geral,"{""sentiment"": ""Neutro"", ""category"": ""Geral"", ""features"": {""keywords"": [""loja"", ""nota"", ""10""], ""urgent_action_needed"": ""N\u00e3o""}}"
+0e0190b9db53b689b285d3f3916f8441,obrigado pela atençao amim dispensada,Neutro,Geral,"{""sentiment"": ""Neutro"", ""category"": ""Geral"", ""features"": {""keywords"": [""obrigado"", ""pela"", ""aten\u00e7ao""], ""urgent_action_needed"": ""N\u00e3o""}}"
+fe3db7c069d694bab50cc43463f91608,"A compra foi realizada facilmente.
+A entrega foi efetuada muito antes do prazo dado.
+O produto já começou a ser usado e até o presente,
+sem problemas.",Neutro,Logística,"{""sentiment"": ""Neutro"", ""category"": ""Log\u00edstica"", ""features"": {""keywords"": [""a"", ""compra"", ""foi""], ""urgent_action_needed"": ""N\u00e3o""}}"
